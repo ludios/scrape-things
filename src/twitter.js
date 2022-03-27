@@ -1,7 +1,8 @@
-require('./shared');
-const puppeteer = require('puppeteer-extra');
+require("./shared");
+const fs = require("fs");
+const puppeteer = require("puppeteer-extra");
 
-async function testStealthPlugin() {
+async function test_stealth_plugin() {
     let browser = await puppeteer.launch({
         headless: true,
         pipe: true,
@@ -19,29 +20,28 @@ async function testStealthPlugin() {
     await browser.close();
 }
 
-async function getTwitterFollowers(username) {
-    let browser = await puppeteer.launch({
-        headless: true,
-        pipe: true,
-    });
-
-    const page = await browser.newPage();
-    await page.setViewport({ width: 1920, height: 1080 });
-
-    console.log(`Testing the stealth plugin..`);
-    await page.goto(`https://twitter.com/${username}/followers`);
-    await page.waitForTimeout(10000);
-
-    await browser.close();
+function get_cookie_value(cookie_dir, name) {
+    if (name.includes(".") || name.includes("/")) {
+        throw Error(`rejected possible path traversal attempt: ${name}`);
+    }
+    return fs.readFileSync(`${cookie_dir}/${name}`).toString().trim();
 }
 
-async function getTwitterFollowing(username) {
+async function get_twitter_followers(cookie_dir, username) {
+
+}
+
+async function get_twitter_following(cookie_dir, username) {
     let browser = await puppeteer.launch({
         headless: true,
         pipe: true,
     });
 
     const page = await browser.newPage();
+    await page.setCookie(
+        {domain: ".twitter.com", path: "/", httpOnly: true, secure: true, name: "auth_token", value: get_cookie_value(cookie_dir, "auth_token")},
+        {domain: ".twitter.com", path: "/", httpOnly: true, secure: true, name: "ct0", value: get_cookie_value(cookie_dir, "ct0")},
+    );
     await page.setViewport({ width: 1920, height: 1080 });
 
     await page.goto(`https://twitter.com/${username}/following`, {
@@ -67,7 +67,7 @@ async function getTwitterFollowing(username) {
                 if (!username.startsWith("@")) {
                     throw Error(`Expected to get a username starting with "@"; got ${username}`);
                 }
-                usernames.push(username);
+                usernames.push(username.replace(/^@/, ""));
             }
             return usernames;
         });
@@ -76,7 +76,6 @@ async function getTwitterFollowing(username) {
         for (let username of new_usernames) {
             usernames.add(username);
         }
-        console.log(usernames);
 
         if (usernames.size == last_usernames_count) {
             failures_to_get_more_usernames += 1;
@@ -90,6 +89,10 @@ async function getTwitterFollowing(username) {
     }
 
     await browser.close();
+
+    for (let username of usernames) {
+        console.log(username);
+    }
 }
 
-getTwitterFollowing("notegone");
+get_twitter_following("/home/at/.cache/cookies/twitter/notegone", "notegone");
