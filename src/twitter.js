@@ -22,16 +22,16 @@ async function test_stealth_plugin() {
 
 function get_cookie_value(cookie_dir, name) {
     if (name.includes(".") || name.includes("/")) {
-        throw Error(`rejected possible path traversal attempt: ${name}`);
+        throw Error(`rejected possible path traversal attempt: ${inspect(name)}`);
     }
     return fs.readFileSync(`${cookie_dir}/${name}`).toString().trim();
 }
 
-async function get_twitter_followers(cookie_dir, username) {
+async function get_twitter_followers_or_following(cookie_dir, username, which) {
+    if (!["followers", "following"].includes(which)) {
+        throw Error(`'which' argument must be either "followers" or "following", was ${inspect(which)}`);
+    }
 
-}
-
-async function get_twitter_following(cookie_dir, username) {
     let browser = await puppeteer.launch({
         headless: true,
         pipe: true,
@@ -44,17 +44,17 @@ async function get_twitter_following(cookie_dir, username) {
     );
     await page.setViewport({ width: 1920, height: 1080 });
 
-    await page.goto(`https://twitter.com/${username}/following`, {
+    await page.goto(`https://twitter.com/${username}/${which}`, {
         referer: `https://twitter.com/${username}`,
         waitUntil: "networkidle0",
     });
 
-    await page.evaluate((username) => {
-        const node_list = document.querySelectorAll(`div[role="presentation"] > a[href="/${username}/following"][role=tab][aria-selected=true]`);
+    await page.evaluate((username, which) => {
+        const node_list = document.querySelectorAll(`div[role="presentation"] > a[href="/${username}/${which}"][role=tab][aria-selected=true]`);
         if (node_list.length != 1) {
             throw Error("The tab we expected to be focused was not focused; are we on the right page?");
         }
-    }, username);
+    }, username, which);
 
     const usernames = new Set();
     let failures_to_get_more_usernames = 0;
@@ -65,7 +65,7 @@ async function get_twitter_following(cookie_dir, username) {
             const usernames = [];
             for (const username of usernames_with_at) {
                 if (!username.startsWith("@")) {
-                    throw Error(`Expected to get a username starting with "@"; got ${username}`);
+                    throw Error(`Expected to get a username starting with "@"; got ${inspect(username)}`);
                 }
                 usernames.push(username.replace(/^@/, ""));
             }
@@ -95,4 +95,12 @@ async function get_twitter_following(cookie_dir, username) {
     }
 }
 
-get_twitter_following("/home/at/.cache/cookies/twitter/notegone", "notegone");
+async function get_twitter_followers(cookie_dir, username) {
+    return get_twitter_followers_or_following(cookie_dir, username, "followers");
+}
+
+async function get_twitter_following(cookie_dir, username) {
+    return get_twitter_followers_or_following(cookie_dir, username, "following");
+}
+
+get_twitter_followers("/home/at/.cache/cookies/twitter/notegone", "notegone");
