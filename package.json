@@ -11,5 +11,8 @@
     "puppeteer": "^13.5.1",
     "puppeteer-extra": "^3.2.3",
     "puppeteer-extra-plugin-stealth": "^2.9.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.28"
   }
 }
