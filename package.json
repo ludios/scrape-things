@@ -17,12 +17,18 @@
     "puppeteer-extra-plugin-user-preferences": "^2.3.1"
   },
   "devDependencies": {
-    "esbuild": "^0.14.28"
+    "esbuild": "^0.14.28",
+    "esbuild-plugin-import-glob": "^0.1.1"
   },
   "pnpm": {
     "//": "Override clone-deep to get a working bundle from esbuild despite https://github.com/jonschlinkert/merge-deep/issues/18",
     "overrides": {
       "clone-deep": "^4.0.1"
+    },
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "puppeteer": "13"
+      }
     }
   }
 }
