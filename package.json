@@ -10,9 +10,19 @@
   "dependencies": {
     "puppeteer": "^13.5.1",
     "puppeteer-extra": "^3.2.3",
-    "puppeteer-extra-plugin-stealth": "^2.9.0"
+    "puppeteer-extra-plugin-stealth": "^2.9.0",
+    "puppeteer-extra-plugin-adblocker": "^2.12.0",
+    "//": "Add -user-data-dir and -user-preferences just to make the esbuild bundle work",
+    "puppeteer-extra-plugin-user-data-dir": "^2.3.1",
+    "puppeteer-extra-plugin-user-preferences": "^2.3.1"
   },
   "devDependencies": {
     "esbuild": "^0.14.28"
+  },
+  "pnpm": {
+    "//": "Override clone-deep to get a working bundle from esbuild despite https://github.com/jonschlinkert/merge-deep/issues/18",
+    "overrides": {
+      "clone-deep": "^4.0.1"
+    }
   }
 }
