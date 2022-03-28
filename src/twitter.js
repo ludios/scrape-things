@@ -1,5 +1,6 @@
 require("./shared");
 const fs = require("fs");
+const process = require("process");
 const puppeteer = require("puppeteer-extra");
 
 async function test_stealth_plugin() {
@@ -79,13 +80,15 @@ async function get_twitter_followers_or_following(cookie_dir, username, which) {
 
         if (usernames.size == last_usernames_count) {
             failures_to_get_more_usernames += 1;
+        } else {
+            failures_to_get_more_usernames = 0;
         }
-        if (failures_to_get_more_usernames == 3) {
+        if (failures_to_get_more_usernames == 4) {
             break;
         }
 
         await page.keyboard.press("PageDown");
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(1500);
     }
 
     await browser.close();
@@ -103,4 +106,6 @@ async function get_twitter_following(cookie_dir, username) {
     return get_twitter_followers_or_following(cookie_dir, username, "following");
 }
 
-get_twitter_followers("/home/at/.cache/cookies/twitter/notegone", "notegone");
+const username = process.argv[2];
+const which = process.argv[3];
+get_twitter_followers_or_following("/home/at/.cache/cookies/twitter/notegone", username, which);

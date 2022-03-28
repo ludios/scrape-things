@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -eu
+
+NAME=twitter
+
+esbuild src/"$NAME".js --tree-shaking=false --bundle --platform=node --banner:js="#!/usr/bin/env node" > "$NAME".new
+chmod +x "$NAME".new
+mv -fT "$NAME".new "$NAME"
