@@ -28,6 +28,13 @@ function get_cookie_value(cookie_dir, name) {
     return fs.readFileSync(`${cookie_dir}/${name}`).toString().trim();
 }
 
+// https://bobbyhadz.com/blog/javascript-convert-string-to-title-case
+function title_case(str) {
+    return str.replace(/\w\S*/g, word => {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+}
+
 async function get_twitter_followers_or_following(cookie_dir, username, which) {
     if (!["followers", "following"].includes(which)) {
         throw Error(`'which' argument must be either "followers" or "following", was ${inspect(which)}`);
@@ -61,8 +68,12 @@ async function get_twitter_followers_or_following(cookie_dir, username, which) {
     let failures_to_get_more_usernames = 0;
 
     while (true) {
-        const new_usernames = await page.evaluate(() => {
-            const usernames_with_at = Array.from(document.querySelectorAll('a[href][role="link"][tabindex][class] > div[class] > div[class][dir] > span[class]')).map(e => e.innerText);
+        const aria_label = `Timeline: ${title_case(which)}`;
+        const new_usernames = await page.evaluate((aria_label) => {
+            const usernames_with_at = Array.from(document.querySelectorAll(`
+                div[aria-label="${aria_label}"] > div > div > div > div > div > div > div > div > div > div > div >
+                a[href][role="link"][tabindex][class] > div[class] > div[class][dir] > span[class]
+            `)).map(e => e.innerText);
             const usernames = [];
             for (const username of usernames_with_at) {
                 if (!username.startsWith("@")) {
@@ -71,7 +82,7 @@ async function get_twitter_followers_or_following(cookie_dir, username, which) {
                 usernames.push(username.replace(/^@/, ""));
             }
             return usernames;
-        });
+        }, aria_label);
 
         const last_usernames_count = usernames.size;
         for (let username of new_usernames) {
@@ -96,14 +107,6 @@ async function get_twitter_followers_or_following(cookie_dir, username, which) {
     for (let username of usernames) {
         console.log(username);
     }
-}
-
-async function get_twitter_followers(cookie_dir, username) {
-    return get_twitter_followers_or_following(cookie_dir, username, "followers");
-}
-
-async function get_twitter_following(cookie_dir, username) {
-    return get_twitter_followers_or_following(cookie_dir, username, "following");
 }
 
 const username = process.argv[2];
