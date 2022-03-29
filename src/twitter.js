@@ -99,7 +99,7 @@ async function get_twitter_followers_or_following(cookie_dir, username, which) {
         }
 
         await page.keyboard.press("PageDown");
-        await page.waitForTimeout(1500);
+        await page.waitForTimeout(500);
     }
 
     await browser.close();
