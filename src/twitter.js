@@ -94,7 +94,8 @@ async function get_twitter_followers_or_following(cookie_dir, username, which) {
         } else {
             failures_to_get_more_usernames = 0;
         }
-        if (failures_to_get_more_usernames == 4) {
+        const failure_waterline = usernames.size == 0 ? 20 : 8;
+        if (failures_to_get_more_usernames >= failure_waterline) {
             break;
         }
 
