@@ -1,7 +1,7 @@
-require("./shared");
-const fs = require("fs");
-const process = require("process");
-const puppeteer = require("puppeteer-extra");
+import "./shared.js";
+import fs from "fs";
+import process from "process";
+import puppeteer from "puppeteer-extra";
 
 async function test_stealth_plugin() {
     let browser = await puppeteer.launch({
