@@ -4,31 +4,15 @@
   "description": "",
   "main": "index.js",
   "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./scripts/build"
-  },
   "author": "",
   "dependencies": {
     "puppeteer": "^13.5.1",
     "puppeteer-extra": "^3.2.3",
     "puppeteer-extra-plugin-adblocker": "^2.12.0",
-    "puppeteer-extra-plugin-stealth": "^2.9.0",
-    "puppeteer-extra-plugin-user-data-dir": "^2.3.1",
-    "puppeteer-extra-plugin-user-preferences": "^2.3.1"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^21.0.3",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.1.3",
-    "esbuild": "^0.14.28",
-    "esbuild-plugin-import-glob": "^0.1.1",
-    "merge-deep": "^3.0.3",
-    "rollup": "^2.70.1",
-    "webpack": "^5.70.0"
+    "puppeteer-extra-plugin-stealth": "^2.9.0"
   },
   "pnpm": {
-    "//": "Override clone-deep to get a working bundle from esbuild despite https://github.com/jonschlinkert/merge-deep/issues/18",
+    "//": "Override clone-deep to get a more-working bundle from esbuild despite https://github.com/jonschlinkert/merge-deep/issues/18",
     "overrides": {
       "clone-deep": "^4.0.1"
     },
