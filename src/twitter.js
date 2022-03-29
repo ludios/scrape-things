@@ -109,6 +109,7 @@ async function get_twitter_followers_or_following(cookie_dir, username, which) {
     }
 }
 
+const cookie_dir = process.env['SCRAPE_THINGS_TWITTER_COOKIE_DIR'];
 const username = process.argv[2];
 const which = process.argv[3];
-get_twitter_followers_or_following("/home/at/.cache/cookies/twitter/notegone", username, which);
+get_twitter_followers_or_following(cookie_dir, username, which);
