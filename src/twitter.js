@@ -71,8 +71,7 @@ async function get_twitter_followers_or_following(cookie_dir, username, which) {
         const aria_label = `Timeline: ${title_case(which)}`;
         const new_usernames = await page.evaluate((aria_label) => {
             const usernames_with_at = Array.from(document.querySelectorAll(`
-                div[aria-label="${aria_label}"] > div > div > div > div > div > div > div > div > div > div > div >
-                a[href][role="link"][tabindex][class] > div[class] > div[class][dir] > span[class]
+                div[aria-label="${aria_label}"] a[href][role="link"][tabindex][class] > div[class] > div[class][dir] > span[class]
             `)).map(e => e.innerText);
             const usernames = [];
             for (const username of usernames_with_at) {
